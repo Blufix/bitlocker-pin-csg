@@ -64,6 +64,27 @@ The solution can be customized with your organization's branding:
 - Update color schemes in FinalBitLockerPopup.ps1
 - Modify text and messaging to match your organization's terminology
 
+## Handling Closed Dialogs
+
+A companion script is available to handle cases where users close the BitLocker PIN dialog without setting a PIN.
+
+### Intune Platform Script Implementation
+
+The `CheckAndLaunchBitLockerPinSetup.ps1` script can be deployed as an Intune Platform Script:
+
+1. In Intune admin portal, navigate to **Devices** > **Scripts** > **Add** > **Windows** > **PowerShell Script**
+2. Upload the `CheckAndLaunchBitLockerPinSetup.ps1` script
+3. Configure the following settings:
+   - Run script in 64-bit PowerShell: **Yes**
+   - Run script as signed-in user: **No** (run as system)
+   - Enforce script signature check: Optional
+   - Run script even when device is in use: **Yes**
+   - Run this script using the logged-on credentials: **No**
+4. Assign the script to the same group as your BitLocker PIN setup package
+
+
+This ensures that any device where a user has closed the BitLocker dialog will be prompted again until they complete the PIN setup process.
+
 ## License
 
 © 2025 CSG. All rights reserved.
