@@ -24,6 +24,9 @@ This project provides a complete solution for implementing BitLocker drive encry
 - **DetectBitLockerPin.ps1**: Detection script for Intune compliance reporting
 - **ServiceUI.exe**: Utility to display the UI in system context
 - **Assets**: Contains branding and UI elements
+- **C:\ProgramData\BitLockerPIN**: Persistent location where the setup script
+  copies `ServiceUI.exe`, `FinalBitLockerPopup.ps1` and the `Assets` folder for
+  use by the login enforcement script
 
 ## Deployment
 
@@ -67,6 +70,8 @@ The solution can be customized with your organization's branding:
 ## Handling Closed Dialogs
 
 A companion script is available to handle cases where users close the BitLocker PIN dialog without setting a PIN.
+
+During installation the `SetBitLockerPin.ps1` script copies the required UI files to `C:\ProgramData\BitLockerPIN`. The login script will look for this folder when launching the PIN setup and falls back to its own directory if the folder is missing.
 
 ### Intune Platform Script Implementation
 

@@ -2,8 +2,24 @@
 # Modified with modern UI based on BitLockerPinUI design
 # The script is provided "AS IS" with no warranties.
 
-# Run the modern UI popup script with ServiceUI
-.\ServiceUI.exe -process:Explorer.exe "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$PSScriptRoot\FinalBitLockerPopup.ps1"
+# Persist helper files for later use (e.g. login script)
+$persistPath = "C:\ProgramData\BitLockerPIN"
+if (-not (Test-Path -Path $persistPath)) {
+    New-Item -Path $persistPath -ItemType Directory -Force | Out-Null
+    $acl = Get-Acl $persistPath
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+        "Users","ReadAndExecute","ContainerInherit,ObjectInherit","None","Allow")
+    $acl.SetAccessRule($rule)
+    Set-Acl -Path $persistPath -AclObject $acl
+}
+Copy-Item -Path "$PSScriptRoot\ServiceUI.exe" -Destination $persistPath -Force
+Copy-Item -Path "$PSScriptRoot\FinalBitLockerPopup.ps1" -Destination $persistPath -Force
+if (Test-Path "$PSScriptRoot\Assets") {
+    Copy-Item -Path "$PSScriptRoot\Assets" -Destination $persistPath -Recurse -Force
+}
+
+# Run the modern UI popup script with ServiceUI from the persistent location
+& "$persistPath\ServiceUI.exe" -process:Explorer.exe "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$persistPath\FinalBitLockerPopup.ps1"
 $exitCode = $LASTEXITCODE
 
 # ASR rules can block the write access to public documents so we use a writeable path for users and system
