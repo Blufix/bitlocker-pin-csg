@@ -1,5 +1,7 @@
 # Intune BitLocker PIN Setup
 
+This project is based on the work of Oliver Kieselbach (https://oliverkieselbach.com/2019/08/02/how-to-enable-pre-boot-bitlocker-startup-pin-on-windows-with-intune/)
+
 A secure, modern solution for deploying and enforcing BitLocker PIN protection through Microsoft Intune.
 
 ![BitLocker PIN Setup](Win32/SetBitLockerPin.png)
