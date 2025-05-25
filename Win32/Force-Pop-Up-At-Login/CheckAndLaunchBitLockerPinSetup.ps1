@@ -10,8 +10,13 @@ $pinProtectorExists = $bitlockerVolume.KeyProtector | Where-Object { $_.KeyProte
 if (-not $pinProtectorExists) {
     Write-Host "BitLocker PIN not set. Launching PIN setup..."
     
-    # Get the script directory
-    $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+    # Use the persistent script location if available
+    $persist = 'C:\ProgramData\BitLockerPIN'
+    if (Test-Path -Path $persist) {
+        $scriptPath = $persist
+    } else {
+        $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+    }
     
     # Run the BitLocker PIN setup script
     & "$scriptPath\ServiceUI.exe" -process:Explorer.exe "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$scriptPath\FinalBitLockerPopup.ps1"
