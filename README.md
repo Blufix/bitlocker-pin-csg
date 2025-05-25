@@ -24,18 +24,37 @@ This project provides a complete solution for implementing BitLocker drive encry
 - **DetectBitLockerPin.ps1**: Detection script for Intune compliance reporting
 - **ServiceUI.exe**: Utility to display the UI in system context
 - **Assets**: Contains branding and UI elements
+- **UninstallBitLockerPin.ps1**: Removes the persistent helper files
+- **uninstall.cmd**: Calls the uninstall script for Intune
 - **C:\ProgramData\BitLockerPIN**: Persistent location where the setup script
   copies `ServiceUI.exe`, `FinalBitLockerPopup.ps1` and the `Assets` folder for
   use by the login enforcement script
 
 ## Deployment
 
-This package is designed to be deployed as a Win32 application through Microsoft Intune:
+This package is designed to be deployed as a Win32 application through Microsoft Intune.
 
-1. Package the contents using the Microsoft Intune Win32 App Packaging Tool
-2. Upload the package to Intune
-3. Configure detection rules using the provided DetectBitLockerPin.ps1 script
-4. Assign to user or device groups as needed
+### Create the Win32 package
+
+Run the Win32 Content Prep Tool from the repository root:
+
+```
+IntuneWinAppUtil.exe -c Win32 -s install.cmd -o .
+```
+
+Upload the generated **BitLocker.intunewin** file to Intune.
+
+### Intune application configuration
+
+When adding the app in the Intune portal use the following settings:
+
+* **Install command:** `install.cmd`
+* **Uninstall command:** `uninstall.cmd`
+* **Detection rules:** Use the `DetectBitLockerPin.ps1` script
+
+After configuring the commands, assign the application to the required user or device groups.
+
+The uninstall command deletes `C:\ProgramData\BitLockerPIN` and the helper scripts placed there during installation.
 
 ## Requirements
 
